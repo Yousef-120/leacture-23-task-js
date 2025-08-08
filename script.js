@@ -20,41 +20,9 @@ alert.appendChild(msg);
 let alertTimeout;
 let showData = () => {
   table.innerHTML = "";
-  let cartTotal = 0;
-  products.forEach((el, productIndex) => {
-    productsDiv.innerHTML += `<div class="col-12 p-3 bg-white shadow rounded border">
-    <h1>${el.name}</h1>
-    <div class="d-flex justify-content-between align-items-center">
-    <p class="mb-0">Price : ${el.price}</p>
-    <button class="btn btn-success" onclick="showCart(${productIndex})">Add To Cart</button>
-    </div>`;
-  });
-  cart.forEach((el, index) => {
-    let totalProductPrice = el.price * el.qty;
-    cartTotal += totalProductPrice;
-    table.innerHTML += `<tr>
-              <td>${index + 1}</td>
-              <td>${el.name}</td>
-              <td>${el.price}</td>
-              <td>
-                <div class="col-12 d-flex justify-content-between align-items-center">
-                <button class="btn btn-secondary px-3" onclick="editQty(0,${index})"><i class="fa-solid fa-minus"></i></button>
-                <span>${el.qty}</span>
-                <button class="btn btn-secondary px-3" onclick="editQty(1,${index})"><i class="fa-solid fa-plus"></i></button>
-                </div>
-              </td>
-              <td>${totalProductPrice}</td>
-              <td>
-              <div class="col-12 d-flex gap-2 justify-content-center align-align-items-center">
-                <button class="btn btn-secondary col-4" onclick="showModal(1,${index})">Edit</button>
-                <button class="btn btn-danger col-4" onclick="showModal(2,${index})">delete</button>
-                </div>
-              </td>
-            </tr>`;
-    total.innerText = cartTotal;
-  });
+  renderProducts(products);
+  renderCart();
 };
-showData();
 let showAlert = (type, message) => {
   alert.classList.add("d-none");
   clearTimeout(alertTimeout);
@@ -76,7 +44,7 @@ let showAlert = (type, message) => {
   setTimeout(() => {
     alert.classList.remove("d-none");
     alert.classList.add("d-flex", "animate__fadeInDown");
-  }, 200);
+  }, 50);
 
   alertTimeout = setTimeout(() => {
     alert.classList.remove("animate__fadeInDown");
@@ -145,27 +113,15 @@ let addProduct = () => {
     let newProduct = { id: productId.value, name: productName.value, price: productPrice.value, qty: 1 };
     products.push(newProduct);
     localStorage.setItem("products", JSON.stringify(products));
-    productsDiv.innerHTML = "";
-    products.forEach((el, productIndex) => {
-      productsDiv.innerHTML += `<div class="col-12 p-3 bg-white shadow rounded border">
-          <h1>${el.name}</h1>
-          <div class="d-flex justify-content-between align-items-center">
-            <p class="mb-0">Price : ${el.price}</p>
-            <button class="btn btn-success" onclick="showCart(${productIndex})">Add To Cart</button>
-          </div>`;
-      productName.value = "";
-      productPrice.value = "";
-      productId.value = "";
-      newProduct = "";
-      closeModal(0);
-      showAlert("success", "A new product has been successfully created.");
-    });
+    renderProducts(products);
+    closeModal(0)
+    showAlert("success", "A new product has been successfully created.");
   }
 };
-let showCart = (productIndex) => {
-  let addedProduct = products[productIndex];
+let showCart = (productId) => {
+  let addedProduct = products.find((el) => +el.id === +productId);
   let isMatch = cart.find((el) => {
-    return products[productIndex].name === el.name;
+    return el.id == addedProduct.id;
   });
   if (isMatch === undefined) {
     cart.push(addedProduct);
@@ -228,7 +184,7 @@ let deleteProduct = (index) => {
   let deleteProductName = cart[index].name;
   cart[index].qty = 1;
   cart.splice(index, 1);
-  showAlert("error", `The product named (${deleteProductName}) has been removed.`);
+  showAlert("error", `The product named "${deleteProductName}" has been removed.`);
   renderCart();
   localStorage.setItem("cart", JSON.stringify(cart));
 };
@@ -307,12 +263,12 @@ let resetCart = () => {
 let renderProducts = (productsArray) => {
   productsDiv.innerHTML = "";
 
-  productsArray.forEach((el, productIndex) => {
+  productsArray.forEach((el) => {
     productsDiv.innerHTML += `<div class="col-12 p-3 bg-white shadow rounded border">
       <h1>${el.name}</h1>
       <div class="d-flex justify-content-between align-items-center">
         <p class="mb-0">Price : ${el.price}</p>
-        <button class="btn btn-success" onclick="showCart('${el.name}')">Add To Cart</button>
+        <button class="btn btn-success" onclick="showCart(${el.id})">Add To Cart</button>
       </div>
     </div>`;
   });
@@ -328,3 +284,4 @@ let search = () => {
   });
 };
 search();
+showData();
