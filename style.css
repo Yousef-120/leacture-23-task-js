@@ -15,6 +15,7 @@ tbody {
     font-size: 12px;
   }
 }
+
 #total
 {
     text-align: center;
@@ -33,6 +34,10 @@ tbody {
 
   .modal-box
   {
+    h2
+    {
+      width: 80%;
+    }
     height: fit-content;
     .top
     {
