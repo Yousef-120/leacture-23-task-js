@@ -8,7 +8,6 @@ let productName = document.querySelector("#product-name");
 let productPrice = document.querySelector("#product-price");
 let productId = document.querySelector("#product-id");
 let addPhoneBtn = document.querySelector("#addPhone");
-let resetBtn = document.querySelector("#resetBtn");
 let alert = document.querySelector(`.content .alert`);
 let alertIco = document.querySelector(`.content .alert i`);
 let msg = document.createElement("div");
@@ -18,6 +17,7 @@ let products = JSON.parse(localStorage.getItem("products")) || [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 alert.appendChild(msg);
 let alertTimeout;
+
 let showData = () => {
   table.innerHTML = "";
   renderProducts(products);
@@ -259,6 +259,7 @@ let resetCart = () => {
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
   closeModal(3);
+  showAlert("error" , "The Cart has been reset.")
 };
 let renderProducts = (productsArray) => {
   productsDiv.innerHTML = "";
